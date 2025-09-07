@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from './contexts/AuthContext'
 import { NotificationProvider } from './contexts/NotificationContext'
 import { Login, Register, Dashboard } from './pages'
@@ -7,6 +8,7 @@ import ProjectDetail from './pages/ProjectDetail'
 import CreateProject from './pages/CreateProject'
 import EditProject from './pages/EditProject'
 import Notifications from './pages/Notifications'
+import AdminPage from './pages/AdminPage'
 import { ProtectedRoute } from './components/layout/ProtectedRoute'
 import './App.css'
 
@@ -16,6 +18,30 @@ function App() {
       <Router>
         <NotificationProvider>
         <div className="min-h-screen bg-gray-50">
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: '#363636',
+                color: '#fff',
+              },
+              success: {
+                duration: 3000,
+                iconTheme: {
+                  primary: '#4ade80',
+                  secondary: '#fff',
+                },
+              },
+              error: {
+                duration: 4000,
+                iconTheme: {
+                  primary: '#ef4444',
+                  secondary: '#fff',
+                },
+              },
+            }}
+          />
           <Routes>
             {/* Rutas públicas */}
             <Route path="/login" element={<Login />} />
@@ -71,6 +97,16 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Notifications />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Ruta de administración (solo para administradores) */}
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute>
+                  <AdminPage />
                 </ProtectedRoute>
               } 
             />

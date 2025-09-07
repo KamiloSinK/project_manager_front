@@ -121,6 +121,64 @@ class AuthService {
       throw new Error('Error al obtener usuarios');
     }
   }
+
+  // Métodos de administración (solo para administradores)
+  async getAllUsersForAdmin(): Promise<User[]> {
+    const token = this.getToken();
+    
+    if (!token) {
+      throw new Error('No hay token de autenticación');
+    }
+
+    try {
+      const response = await apiClient.get<User[]>('/auth/admin/users/');
+      return response.data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error || 'Error al obtener usuarios para administración';
+      throw new Error(errorMessage);
+    }
+  }
+
+  async updateUserAsAdmin(userId: number, userData: Partial<User>): Promise<{ message: string; user: User }> {
+    const token = this.getToken();
+    
+    if (!token) {
+      throw new Error('No hay token de autenticación');
+    }
+
+    try {
+      const response = await apiClient.patch<{ message: string; user: User }>(
+        `/auth/admin/users/${userId}/`,
+        userData
+      );
+      return response.data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error || 'Error al actualizar usuario';
+      throw new Error(errorMessage);
+    }
+  }
+
+  async getUserPermissions(): Promise<{
+    can_manage_projects: boolean;
+    can_manage_tasks: boolean;
+    is_admin: boolean;
+    is_collaborator: boolean;
+    is_viewer: boolean;
+    role: string;
+  }> {
+    const token = this.getToken();
+    
+    if (!token) {
+      throw new Error('No hay token de autenticación');
+    }
+
+    try {
+      const response = await apiClient.get('/auth/permissions/');
+      return response.data;
+    } catch (error) {
+      throw new Error('Error al obtener permisos del usuario');
+    }
+  }
 }
 
 export const authService = new AuthService();
