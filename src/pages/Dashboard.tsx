@@ -5,9 +5,11 @@ import { projectService } from '../services/projectService';
 import type { ProjectStats } from '../types/project';
 import { Button, Card, CardHeader, CardContent } from '../components/ui';
 import NotificationCenter from '../components/NotificationCenter';
+import { usePermissions } from '../hooks/usePermissions';
 
 const Dashboard: React.FC = () => {
   const { state: { user }, logout } = useAuth();
+  const { canCreateProject } = usePermissions();
   const [stats, setStats] = useState<ProjectStats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -193,14 +195,16 @@ const Dashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Link to="/projects/new">
-                <Button variant="primary" className="h-12 justify-start w-full">
-                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  Crear Proyecto
-                </Button>
-              </Link>
+              {canCreateProject() && (
+                <Link to="/projects/new">
+                  <Button variant="primary" className="h-12 justify-start w-full">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Crear Proyecto
+                  </Button>
+                </Link>
+              )}
               <Link to="/projects">
                 <Button variant="secondary" className="h-12 justify-start w-full">
                   <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

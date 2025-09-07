@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 // 🔥 SOLUCIÓN ULTRA-DEFINITIVA: Sin variables de entorno
-const API_BASE_URL = 'https://kamilo123.pythonanywhere.com/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'localhost:8000';
 
 class ApiClient {
   private client: AxiosInstance;

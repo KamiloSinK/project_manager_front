@@ -178,21 +178,22 @@ const EditProject: React.FC = () => {
     }
   };
 
-  // Verificar permisos
-  const canEdit = user?.role === 'admin' || project?.created_by === user?.id;
-
+  // Mostrar loading mientras se carga el proyecto
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
         <div className="max-w-2xl mx-auto">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-            <div className="h-96 bg-gray-200 rounded-xl"></div>
-          </div>
+          <Card className="p-12 text-center bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Cargando proyecto...</p>
+          </Card>
         </div>
       </div>
     );
   }
+
+  // Verificar permisos
+  const canEdit = user?.role === 'admin' || project?.created_by === user?.id;
 
   if (!project || !canEdit) {
     return (

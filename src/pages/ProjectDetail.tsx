@@ -191,11 +191,10 @@ const statusLabels = {
                 </Link>
               )}
               {canDelete && (
-                <Button 
-                  variant="outline" 
+                <Button
                   onClick={handleDelete}
                   disabled={deleteLoading}
-                  className="text-red-600 border-red-200 hover:bg-red-50"
+                  className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white"
                 >
                   {deleteLoading ? (
                     <svg className="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
