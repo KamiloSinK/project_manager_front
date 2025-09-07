@@ -1,7 +1,23 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
+// 🔍 DEBUG: Verificar variables durante el build
+console.log('🔍 Environment Debug:');
+console.log('Mode:', import.meta.env.MODE);
+console.log('DEV:', import.meta.env.DEV);
+console.log('PROD:', import.meta.env.PROD);
+console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
+console.log('All env vars:', import.meta.env);
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+
+// 🚨 Validación adicional
+if (import.meta.env.PROD && !import.meta.env.VITE_API_URL) {
+  console.error('❌ VITE_API_URL no está configurada en producción!');
+  console.error('Usando fallback:', API_BASE_URL);
+} else {
+  console.log('✅ API_BASE_URL configurada:', API_BASE_URL);
+}
 
 class ApiClient {
   private client: AxiosInstance;
@@ -9,11 +25,12 @@ class ApiClient {
   constructor() {
     this.client = axios.create({
       baseURL: API_BASE_URL,
+      timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
       },
     });
-
+    
     this.setupInterceptors();
   }
 

@@ -4,8 +4,11 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  // Cargar variables de entorno
+  // Cargar variables de entorno basadas en el modo
   const env = loadEnv(mode, process.cwd(), '')
+  
+  console.log('🔍 Build Mode:', mode)
+  console.log('🔍 VITE_API_URL:', env.VITE_API_URL)
   
   return {
     plugins: [react(), tailwindcss()],
@@ -13,10 +16,19 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       host: true
     },
-    // Configuración para variables de entorno
+    // Asegurar que las variables estén disponibles durante el build
     define: {
-      'import.meta.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL),
-      'import.meta.env.VITE_BASE_URL': JSON.stringify(env.VITE_BASE_URL)
+      'import.meta.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL || 'https://kamilo123.pythonanywhere.com/api'),
+      'import.meta.env.VITE_BASE_URL': JSON.stringify(env.VITE_BASE_URL || 'https://project-manager-front.vercel.app')
+    },
+    // Configuración específica para build
+    build: {
+      sourcemap: false,
+      rollupOptions: {
+        output: {
+          manualChunks: undefined
+        }
+      }
     }
   }
 })
