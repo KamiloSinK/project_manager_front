@@ -18,7 +18,11 @@ export default defineConfig(({ mode }) => {
     },
     // Asegurar que las variables estén disponibles durante el build
     define: {
-      'import.meta.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL || 'https://kamilo123.pythonanywhere.com/api'),
+      'import.meta.env.VITE_API_URL': JSON.stringify(
+        mode === 'production' 
+          ? 'https://kamilo123.pythonanywhere.com/api'
+          : env.VITE_API_URL || 'http://localhost:8000/api'
+      ),
       'import.meta.env.VITE_BASE_URL': JSON.stringify(env.VITE_BASE_URL || 'https://project-manager-front.vercel.app')
     },
     // Configuración específica para build
