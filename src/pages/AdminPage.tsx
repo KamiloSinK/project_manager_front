@@ -4,19 +4,10 @@ import UserManagement from '../components/admin/UserManagement';
 import { Navigate } from 'react-router-dom';
 
 const AdminPage: React.FC = () => {
-  const { isAdmin, loading } = usePermissions();
-
-  // Mostrar loading mientras se verifican los permisos
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+  const { isAdmin } = usePermissions();
 
   // Redirigir si no es administrador
-  if (!isAdmin) {
+  if (!isAdmin()) {
     return <Navigate to="/dashboard" replace />;
   }
 

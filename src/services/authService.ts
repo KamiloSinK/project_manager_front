@@ -174,7 +174,14 @@ class AuthService {
 
     try {
       const response = await apiClient.get('/auth/permissions/');
-      return response.data;
+      return response.data as {
+        can_manage_projects: boolean;
+        can_manage_tasks: boolean;
+        is_admin: boolean;
+        is_collaborator: boolean;
+        is_viewer: boolean;
+        role: string;
+      };
     } catch (error) {
       throw new Error('Error al obtener permisos del usuario');
     }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User } from '../../types/auth';
+import type { User } from '../../types/auth';
 import { authService } from '../../services/authService';
 import { usePermissions } from '../../hooks/usePermissions';
 import { toast } from 'react-hot-toast';
@@ -37,11 +37,11 @@ const UserManagement: React.FC<UserManagementProps> = ({ className = '' }) => {
   const handleRoleChange = async (userId: number, newRole: string) => {
     try {
       setUpdating(userId);
-      const result = await authService.updateUserAsAdmin(userId, { role: newRole });
+      const result = await authService.updateUserAsAdmin(userId, { role: newRole as 'admin' | 'collaborator' | 'viewer' });
       
       // Actualizar el usuario en la lista local
       setUsers(users.map(user => 
-        user.id === userId ? { ...user, role: newRole } : user
+        user.id === userId ? { ...user, role: newRole as 'admin' | 'collaborator' | 'viewer' } : user
       ));
       
       toast.success(result.message || 'Rol actualizado exitosamente');
