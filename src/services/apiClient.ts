@@ -1,23 +1,12 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-// 🔍 DEBUG: Verificar variables durante el build
-console.log('🔍 Environment Debug:');
-console.log('Mode:', import.meta.env.MODE);
-console.log('DEV:', import.meta.env.DEV);
-console.log('PROD:', import.meta.env.PROD);
-console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
-console.log('All env vars:', import.meta.env);
+// 🔥 SOLUCIÓN ULTRA-DEFINITIVA: Sin variables de entorno
+const API_BASE_URL = 'https://kamilo123.pythonanywhere.com/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
-
-// 🚨 Validación adicional
-if (import.meta.env.PROD && !import.meta.env.VITE_API_URL) {
-  console.error('❌ VITE_API_URL no está configurada en producción!');
-  console.error('Usando fallback:', API_BASE_URL);
-} else {
-  console.log('✅ API_BASE_URL configurada:', API_BASE_URL);
-}
+console.log('🎯 HARDCODED API_BASE_URL:', API_BASE_URL);
+console.log('🔍 Window location:', window.location.href);
+console.log('🔍 Is production build:', true);
 
 class ApiClient {
   private client: AxiosInstance;
@@ -30,12 +19,10 @@ class ApiClient {
         'Content-Type': 'application/json',
       },
     });
-    
     this.setupInterceptors();
   }
 
   private setupInterceptors() {
-    // Request interceptor to add auth token
     this.client.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem('token');
@@ -49,65 +36,57 @@ class ApiClient {
       }
     );
 
-    // Response interceptor to handle token refresh
     this.client.interceptors.response.use(
       (response) => response,
-      async (error) => {
-        const originalRequest = error.config;
-
-        if (error.response?.status === 401 && !originalRequest._retry) {
-          originalRequest._retry = true;
-
-          const refreshToken = localStorage.getItem('refreshToken');
-          if (refreshToken) {
-            try {
-              const response = await axios.post(`${API_BASE_URL}/auth/token/refresh/`, {
-                refresh: refreshToken,
-              });
-              
-              const newToken = response.data.access;
-              localStorage.setItem('token', newToken);
-              
-              // Retry the original request with new token
-              originalRequest.headers.Authorization = `Bearer ${newToken}`;
-              return this.client(originalRequest);
-            } catch (refreshError) {
-              // Refresh failed, redirect to login
-              localStorage.removeItem('token');
-              localStorage.removeItem('refreshToken');
-              window.location.href = '/login';
-              return Promise.reject(refreshError);
-            }
-          } else {
-            // No refresh token, redirect to login
-            localStorage.removeItem('token');
+      (error) => {
+        if (error.response?.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          
+          if (window.location.pathname !== '/login') {
             window.location.href = '/login';
           }
         }
-
+        
+        if (error.response?.status === 403) {
+          console.error('Access forbidden:', error.response.data);
+        }
+        
+        if (error.response?.status >= 500) {
+          console.error('Server error:', error.response.data);
+        }
+        
+        if (error.code === 'NETWORK_ERROR' || !error.response) {
+          console.error('Network error - API might be down:', {
+            message: error.message,
+            baseURL: API_BASE_URL,
+            config: error.config
+          });
+        }
+        
         return Promise.reject(error);
       }
     );
   }
 
   async get<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.client.get(url, config);
+    return this.client.get<T>(url, config);
   }
 
   async post<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.client.post(url, data, config);
+    return this.client.post<T>(url, data, config);
   }
 
   async put<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.client.put(url, data, config);
+    return this.client.put<T>(url, data, config);
   }
 
   async patch<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.client.patch(url, data, config);
+    return this.client.patch<T>(url, data, config);
   }
 
   async delete<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.client.delete(url, config);
+    return this.client.delete<T>(url, config);
   }
 }
 
