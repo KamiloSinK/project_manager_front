@@ -5,6 +5,7 @@ import { Button } from './ui';
 import { Card } from './ui';
 import { useAuth } from '../contexts/AuthContext';
 import TaskComments from './TaskComments';
+import TaskStatusChanger from './TaskStatusChanger';
 
 interface TaskCardProps {
   task: Task;
@@ -36,19 +37,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
     completed: 'Completado'
   };
 
-  const handleStatusChange = async (newStatus: TaskStatus) => {
-    if (!canManageTasks) return;
-    
-    try {
-      setLoading(true);
-      await taskService.updateTaskStatus(task.id, newStatus);
-      onTaskUpdate();
-    } catch (error) {
-      console.error('Error updating task status:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+
 
   const handleDelete = async () => {
     if (!canManageTasks || !window.confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
@@ -143,44 +132,12 @@ const TaskCard: React.FC<TaskCardProps> = ({
         )}
       </div>
 
-      {/* Cambio rápido de estado */}
-      {canManageTasks && task.status !== 'completed' && (
-        <div className="flex gap-2 pt-2 border-t border-gray-100">
-          {task.status === 'pending' && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleStatusChange('in_progress')}
-              disabled={loading}
-              className="text-blue-600 hover:bg-blue-50"
-            >
-              Iniciar
-            </Button>
-          )}
-          {task.status === 'in_progress' && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleStatusChange('completed')}
-              disabled={loading}
-              className="text-green-600 hover:bg-green-50"
-            >
-              Completar
-            </Button>
-          )}
-          {task.status !== 'pending' && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleStatusChange('pending')}
-              disabled={loading}
-              className="text-yellow-600 hover:bg-yellow-50"
-            >
-              Marcar pendiente
-            </Button>
-          )}
-        </div>
-      )}
+      {/* Cambio de estado - Disponible para cualquier usuario */}
+      <TaskStatusChanger
+        task={task}
+        onStatusChange={onTaskUpdate}
+        compact={true}
+      />
 
       {/* Comentarios de la tarea */}
       <div className="mt-4 pt-4 border-t border-gray-100">

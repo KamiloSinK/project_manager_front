@@ -63,6 +63,12 @@ class TaskService {
     return response.data;
   }
 
+  // Cambiar estado de una tarea (cualquier usuario puede hacerlo)
+  async changeTaskStatus(taskId: number, status: 'pending' | 'in_progress' | 'completed'): Promise<Task> {
+    const response = await apiClient.patch<Task>(`/tasks/${taskId}/change_status/`, { status });
+    return response.data;
+  }
+
   // Obtener estadísticas de tareas de un proyecto
   async getTaskStats(projectId: number): Promise<TaskStats> {
     const response = await apiClient.get<TaskStats>(`/projects/${projectId}/task-stats/`);
