@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { Task, TaskStatus } from '../types';
+import type { Task } from '../types';
 import { taskService } from '../services/taskService';
 import { Button } from './ui';
 import { Card } from './ui';
@@ -93,7 +93,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
               </span>
               {task.assigned_to && (
                 <span>
-                  <strong>Asignado a:</strong> {task.assigned_to.full_name}
+                  <strong>Asignado a:</strong> {task.assigned_to}
                 </span>
               )}
             </div>

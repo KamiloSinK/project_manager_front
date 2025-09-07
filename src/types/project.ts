@@ -55,7 +55,7 @@ export interface Task {
   description: string;
   status: TaskStatus;
   priority: 'low' | 'medium' | 'high' | 'urgent';
-  assigned_to: User | null;
+  assigned_to: String | null;
   assigned_to_id: number | null;
   project: number;
   due_date: string;
