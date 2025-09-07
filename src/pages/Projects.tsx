@@ -5,10 +5,12 @@ import type { ProjectListItem } from '../types';
 import { Button } from '../components/ui';
 import { Card } from '../components/ui';
 import { useAuth } from '../contexts/AuthContext';
+import { usePermissions } from '../hooks/usePermissions';
 import Pagination from '../components/Pagination';
 
 const Projects: React.FC = () => {
   const { state: { user } } = useAuth();
+  const { canCreateProject } = usePermissions();
   const navigate = useNavigate();
   const [projects, setProjects] = useState<ProjectListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -134,14 +136,16 @@ const Projects: React.FC = () => {
                 Administra y supervisa todos tus proyectos
               </p>
             </div>
-            <Link to="/projects/new">
-              <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200">
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                Nuevo Proyecto
-              </Button>
-            </Link>
+            {canCreateProject() && (
+              <Link to="/projects/new">
+                <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200">
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Nuevo Proyecto
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
 
