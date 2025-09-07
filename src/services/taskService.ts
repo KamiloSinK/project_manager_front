@@ -57,9 +57,10 @@ class TaskService {
     return this.updateTask(taskId, { assigned_to: userId });
   }
 
-  // Cambiar estado de una tarea
+  // Cambiar estado de una tarea usando el endpoint específico
   async updateTaskStatus(taskId: number, status: 'pending' | 'in_progress' | 'completed'): Promise<Task> {
-    return this.updateTask(taskId, { status });
+    const response = await apiClient.patch<Task>(`/tasks/${taskId}/update_status/`, { status });
+    return response.data;
   }
 
   // Obtener estadísticas de tareas de un proyecto
