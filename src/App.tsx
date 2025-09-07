@@ -14,8 +14,8 @@ import './App.css'
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <NotificationProvider>
         <div className="min-h-screen bg-gray-50">
           <Toaster
@@ -119,8 +119,8 @@ function App() {
           </Routes>
         </div>
         </NotificationProvider>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   )
 }
 

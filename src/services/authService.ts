@@ -131,8 +131,13 @@ class AuthService {
     }
 
     try {
-      const response = await apiClient.get<User[]>('/auth/admin/users/');
-      return response.data;
+      const response = await apiClient.get<{
+        count: number;
+        next: string | null;
+        previous: string | null;
+        results: User[];
+      }>('/auth/admin/users/');
+      return response.data.results; // Extraer solo el array de usuarios
     } catch (error: any) {
       const errorMessage = error.response?.data?.error || 'Error al obtener usuarios para administración';
       throw new Error(errorMessage);

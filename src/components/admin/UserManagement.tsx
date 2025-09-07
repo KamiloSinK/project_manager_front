@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import type { User } from '../../types/auth';
 import { authService } from '../../services/authService';
 import { usePermissions } from '../../hooks/usePermissions';
@@ -15,20 +16,22 @@ const UserManagement: React.FC<UserManagementProps> = ({ className = '' }) => {
   const { isAdmin } = usePermissions();
 
   useEffect(() => {
-    if (!isAdmin) {
+    if (!isAdmin()) {
       toast.error('No tienes permisos para acceder a esta sección');
       return;
     }
     loadUsers();
-  }, [isAdmin]);
+  }, []); // Removemos isAdmin de las dependencias para evitar el bucle
 
   const loadUsers = async () => {
     try {
       setLoading(true);
       const usersData = await authService.getAllUsersForAdmin();
-      setUsers(usersData);
+      // Validación defensiva para asegurar que usersData es un array
+      setUsers(Array.isArray(usersData) ? usersData : []);
     } catch (error: any) {
       toast.error(error.message || 'Error al cargar usuarios');
+      setUsers([]); // Asegurar que users sea un array vacío en caso de error
     } finally {
       setLoading(false);
     }
@@ -122,12 +125,25 @@ const UserManagement: React.FC<UserManagementProps> = ({ className = '' }) => {
   return (
     <div className={`bg-white shadow rounded-lg ${className}`}>
       <div className="px-6 py-4 border-b border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900">
-          Administración de Usuarios
-        </h3>
-        <p className="mt-1 text-sm text-gray-600">
-          Gestiona los roles y estados de los usuarios del sistema.
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-medium text-gray-900">
+              Administración de Usuarios
+            </h3>
+            <p className="mt-1 text-sm text-gray-600">
+              Gestiona los roles y estados de los usuarios del sistema.
+            </p>
+          </div>
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Volver al Dashboard
+          </Link>
+        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -152,7 +168,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ className = '' }) => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {users.map((user) => (
+            {Array.isArray(users) && users.map((user) => (
               <tr key={user.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
