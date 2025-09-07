@@ -4,10 +4,6 @@ import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 // 🔥 SOLUCIÓN ULTRA-DEFINITIVA: Sin variables de entorno
 const API_BASE_URL = 'https://kamilo123.pythonanywhere.com/api';
 
-console.log('🎯 HARDCODED API_BASE_URL:', API_BASE_URL);
-console.log('🔍 Window location:', window.location.href);
-console.log('🔍 Is production build:', true);
-
 class ApiClient {
   private client: AxiosInstance;
 
