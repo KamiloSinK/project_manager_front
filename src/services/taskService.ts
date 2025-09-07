@@ -16,7 +16,7 @@ class TaskService {
     }
 
     const queryString = params.toString();
-    const url = `/api/projects/${projectId}/tasks/${queryString ? `?${queryString}` : ''}`;
+    const url = `/projects/${projectId}/tasks/${queryString ? `?${queryString}` : ''}`;
 
     const response = await apiClient.get<Task[] | { results: Task[] }>(url);
     
@@ -26,7 +26,7 @@ class TaskService {
 
   // Obtener una tarea específica
   async getTask(taskId: number): Promise<Task> {
-    const response = await apiClient.get<Task>(`/api/tasks/${taskId}/`);
+    const response = await apiClient.get<Task>(`/tasks/${taskId}/`);
     return response.data;
   }
 
@@ -37,19 +37,19 @@ class TaskService {
       project: projectId
     };
 
-    const response = await apiClient.post<Task>(`/api/tasks/`, taskPayload);
+    const response = await apiClient.post<Task>(`/tasks/`, taskPayload);
     return response.data;
   }
 
   // Actualizar una tarea
   async updateTask(taskId: number, taskData: UpdateTaskData): Promise<Task> {
-    const response = await apiClient.put<Task>(`/api/tasks/${taskId}/`, taskData);
+    const response = await apiClient.put<Task>(`/tasks/${taskId}/`, taskData);
     return response.data;
   }
 
   // Eliminar una tarea
   async deleteTask(taskId: number): Promise<void> {
-    await apiClient.delete(`/api/tasks/${taskId}/`);
+    await apiClient.delete(`/tasks/${taskId}/`);
   }
 
   // Asignar tarea a un usuario
@@ -64,13 +64,13 @@ class TaskService {
 
   // Obtener estadísticas de tareas de un proyecto
   async getTaskStats(projectId: number): Promise<TaskStats> {
-    const response = await apiClient.get<TaskStats>(`/api/projects/${projectId}/task-stats/`);
+    const response = await apiClient.get<TaskStats>(`/projects/${projectId}/task-stats/`);
     return response.data;
   }
 
   // Obtener estadísticas del dashboard de tareas
   async getDashboardStats(): Promise<TaskStats> {
-    const response = await apiClient.get<TaskStats>(`/api/tasks/dashboard_stats/`);
+    const response = await apiClient.get<TaskStats>(`/tasks/dashboard_stats/`);
     return response.data;
   }
 }
